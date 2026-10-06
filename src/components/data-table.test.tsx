@@ -1,7 +1,10 @@
-import { render, screen, within } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { DataTable, type Column } from './data-table'
+
+const { push } = vi.hoisted(() => ({ push: vi.fn() }))
+vi.mock('next/navigation', () => ({ useRouter: () => ({ push }) }))
 
 type Row = { id: number; name: string }
 const columns: Column<Row>[] = [
@@ -170,5 +173,61 @@ describe('DataTable', () => {
     expect(screen.getByRole('columnheader', { name: 'Monto' })).toHaveClass('hidden', 'lg:table-cell', 'text-right')
     expect(screen.getByText('$1').closest('td')).toHaveClass('hidden', 'lg:table-cell', 'text-right')
     expect(screen.getByRole('columnheader', { name: 'Nombre' })).not.toHaveClass('hidden')
+  })
+
+  describe('rowHref', () => {
+    const linkColumns: Column<Row>[] = [
+      ...columns,
+      { key: 'accion', header: 'Acción', cell: (r) => <button type="button">Menú {r.id}</button> },
+    ]
+    const renderLinked = (rowHref: (r: Row) => string | undefined = (r) => `/fila/${r.id}`) =>
+      render(<DataTable columns={linkColumns} rows={makeRows(2)} getRowKey={(r) => r.id} rowHref={rowHref} />)
+
+    afterEach(() => {
+      push.mockClear()
+      vi.restoreAllMocks()
+    })
+
+    it('al hacer clic en cualquier parte de la fila navega a su ruta', async () => {
+      renderLinked()
+      await userEvent.click(screen.getByText('Fila 2'))
+      expect(push).toHaveBeenCalledWith('/fila/2')
+      expect(screen.getByText('Fila 2').closest('tr')).toHaveClass('cursor-pointer')
+    })
+
+    it('los clics en botones o enlaces de la fila no navegan', async () => {
+      renderLinked()
+      await userEvent.click(screen.getByRole('button', { name: 'Menú 1' }))
+      expect(push).not.toHaveBeenCalled()
+    })
+
+    it('con Ctrl/Cmd abre la ruta en otra pestaña', async () => {
+      const open = vi.spyOn(window, 'open').mockReturnValue(null)
+      renderLinked()
+      const user = userEvent.setup()
+      await user.keyboard('{Control>}')
+      await user.click(screen.getByText('Fila 1'))
+      expect(open).toHaveBeenCalledWith('/fila/1', '_blank', 'noopener')
+      expect(push).not.toHaveBeenCalled()
+    })
+
+    it('si hay texto seleccionado no navega', async () => {
+      vi.spyOn(window, 'getSelection').mockReturnValue({ toString: () => 'Fila' } as Selection)
+      renderLinked()
+      fireEvent.click(screen.getByText('Fila 1'))
+      expect(push).not.toHaveBeenCalled()
+    })
+
+    it('una fila sin ruta no es clicable', async () => {
+      renderLinked((r) => (r.id === 1 ? undefined : `/fila/${r.id}`))
+      await userEvent.click(screen.getByText('Fila 1'))
+      expect(push).not.toHaveBeenCalled()
+      expect(screen.getByText('Fila 1').closest('tr')).not.toHaveClass('cursor-pointer')
+    })
+
+    it('sin rowHref las filas no son clicables', () => {
+      render(<DataTable columns={columns} rows={makeRows(1)} getRowKey={(r) => r.id} />)
+      expect(screen.getByText('Fila 1').closest('tr')).not.toHaveClass('cursor-pointer')
+    })
   })
 })

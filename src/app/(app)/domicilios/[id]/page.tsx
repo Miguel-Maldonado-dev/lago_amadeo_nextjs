@@ -1,6 +1,7 @@
-import { Pencil } from 'lucide-react'
+import Link from 'next/link'
+import { ArrowLeft, Pencil } from 'lucide-react'
 import { notFound } from 'next/navigation'
-import { PageHeader } from '@/components/page-header'
+import { PageBreadcrumb } from '@/components/page-breadcrumb'
 import { Button } from '@/components/ui/button'
 import { AccesosSection } from '@/features/accesos/components/accesos-section'
 import { listTarjetas, listTelefonos } from '@/features/accesos/queries'
@@ -79,25 +80,30 @@ export default async function DomicilioDetallePage({ params }: { params: Promise
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title={domicilio.direccion ?? 'Domicilio'}
-        description="Detalle del domicilio y su historial."
-        breadcrumbs={[{ label: 'Domicilios', href: '/domicilios' }, { label: domicilio.direccion ?? '' }]}
-        actions={
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+        <Button variant="secondary" size="sm" asChild>
+          <Link href="/domicilios">
+            <ArrowLeft />
+            Volver
+          </Link>
+        </Button>
+        <PageBreadcrumb items={[{ label: 'Domicilios', href: '/domicilios' }, { label: domicilio.direccion ?? '' }]} />
+      </div>
+      <DomicilioInfoCard
+        domicilio={domicilio}
+        action={
           <EditDomicilioDialog
             domicilio={domicilio}
             conceptos={conceptos}
             conceptoActual={concepto?.concepto_id ?? null}
             trigger={
-              <Button variant="secondary">
+              <Button variant="secondary" size="icon-sm" aria-label="Editar domicilio" title="Editar domicilio">
                 <Pencil />
-                Editar
               </Button>
             }
           />
         }
       />
-      <DomicilioInfoCard domicilio={domicilio} />
       <AccesosSection domicilio={domicilio} telefonos={telefonos} tarjetas={tarjetas} />
       <ResidentesSection domicilioId={domicilioId} residentes={residentes} />
       <CuotasSection

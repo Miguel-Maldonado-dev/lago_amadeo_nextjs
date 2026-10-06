@@ -9,8 +9,3 @@ export function formatPercent(value: number | null, { sign = false } = {}): stri
   const prefix = sign && rounded > 0 ? '+' : ''
   return `${prefix}${rounded.toString()} %`
 }
-
-export function variation(current: number, previous: number): number | null {
-  if (previous === 0) return null
-  return ((current - previous) / Math.abs(previous)) * 100
-}

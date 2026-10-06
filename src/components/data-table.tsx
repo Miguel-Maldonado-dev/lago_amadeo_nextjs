@@ -1,6 +1,7 @@
 'use client'
 
-import { useId, useMemo, useState, type ReactNode } from 'react'
+import { useId, useMemo, useState, type MouseEvent, type ReactNode } from 'react'
+import { useRouter } from 'next/navigation'
 import {
   ChevronDown,
   ChevronLeft,
@@ -80,6 +81,35 @@ function pageWindow(current: number, totalPages: number): (number | null)[] {
   return pages
 }
 
+const INTERACTIVE = 'a, button, input, select, textarea, label, [role="menuitem"], [role="checkbox"]'
+
+/**
+ * Fila que abre `href` al hacer clic en cualquier parte. Va en un componente aparte para que
+ * `useRouter` solo se use en tablas con filas clicables. Los controles propios de la fila
+ * (enlaces, botones, menús) conservan su comportamiento, y también la selección de texto.
+ */
+function LinkRow({ href, children }: { href: string; children: ReactNode }) {
+  const router = useRouter()
+
+  function onClick(e: MouseEvent<HTMLTableRowElement>) {
+    const target = e.target as Element
+    // Los menús y diálogos se montan en un portal, pero sus clics también llegan aquí.
+    if (!e.currentTarget.contains(target) || target.closest(INTERACTIVE)) return
+    if (window.getSelection()?.toString()) return
+    if (e.metaKey || e.ctrlKey) {
+      window.open(href, '_blank', 'noopener')
+      return
+    }
+    router.push(href)
+  }
+
+  return (
+    <TableRow className="cursor-pointer" onClick={onClick}>
+      {children}
+    </TableRow>
+  )
+}
+
 function ariaSort(sort: SortState, key: string) {
   if (sort?.key !== key) return 'none'
   return sort.dir === 'asc' ? 'ascending' : 'descending'
@@ -96,6 +126,7 @@ export function DataTable<T>({
   emptyDescription,
   emptyAction,
   toolbar,
+  rowHref,
 }: {
   columns: Column<T>[]
   rows: T[]
@@ -107,6 +138,8 @@ export function DataTable<T>({
   emptyDescription?: string
   emptyAction?: ReactNode
   toolbar?: ReactNode
+  /** Ruta que se abre al hacer clic en la fila; sin ruta, la fila no es clicable. */
+  rowHref?: (row: T) => string | undefined
 }) {
   const pageSizeId = useId()
   const [page, setPage] = useState(1)
@@ -188,15 +221,21 @@ export function DataTable<T>({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {visible.map((row) => (
-              <TableRow key={getRowKey(row)}>
-                {columns.map((c) => (
-                  <TableCell key={c.key} className={columnClass(c)}>
-                    {c.cell(row)}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))}
+            {visible.map((row) => {
+              const cells = columns.map((c) => (
+                <TableCell key={c.key} className={columnClass(c)}>
+                  {c.cell(row)}
+                </TableCell>
+              ))
+              const href = rowHref?.(row)
+              return href ? (
+                <LinkRow key={getRowKey(row)} href={href}>
+                  {cells}
+                </LinkRow>
+              ) : (
+                <TableRow key={getRowKey(row)}>{cells}</TableRow>
+              )
+            })}
           </TableBody>
         </Table>
       </div>

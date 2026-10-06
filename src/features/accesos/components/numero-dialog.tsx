@@ -18,6 +18,7 @@ import {
 } from '../actions'
 import { MSG_TARJETA_GUARDADA, MSG_TELEFONO_GUARDADO } from '../messages'
 import { numeroSchema, type NumeroInput } from '../schemas'
+import { CodigoTarjetaDesglose } from './codigo-tarjeta-desglose'
 
 export type AccesoKind = 'telefono' | 'tarjeta'
 
@@ -62,6 +63,7 @@ export function NumeroDialog({
   const config = KINDS[kind]
   const {
     register,
+    control,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
@@ -119,6 +121,7 @@ export function NumeroDialog({
           <Input id="valor" inputMode="numeric" maxLength={10} {...register('valor')} />
           {errors.valor && <p className="text-xs text-danger">{errors.valor.message}</p>}
         </div>
+        {kind === 'tarjeta' ? <CodigoTarjetaDesglose control={control} /> : null}
       </form>
     </FormDialog>
   )

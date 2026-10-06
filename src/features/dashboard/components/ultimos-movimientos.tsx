@@ -3,19 +3,18 @@ import { ArrowRight } from 'lucide-react'
 import { EmptyState } from '@/components/empty-state'
 import { Money } from '@/components/money'
 import { SectionCard } from '@/components/section-card'
-import { StatusBadge } from '@/components/status-badge'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { TipoMovimientoCell } from '@/features/movimientos/components/tipo-movimiento-cell'
 import { TIPO_MOVIMIENTO } from '@/lib/constants'
 import { formatDate } from '@/lib/dates'
 import type { Views } from '@/lib/supabase/types'
-
-const MAX = 40
 
 export function UltimosMovimientos({ rows }: { rows: Views<'movimientos_info'>[] }) {
   return (
     <SectionCard
       title="Últimos movimientos"
+      flush
       action={
         <Button asChild variant="secondary" size="sm">
           <Link href="/movimientos">
@@ -29,8 +28,8 @@ export function UltimosMovimientos({ rows }: { rows: Views<'movimientos_info'>[]
       ) : (
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead>Fecha</TableHead>
+            <TableRow className="bg-muted hover:bg-muted">
+              <TableHead className="hidden xl:table-cell">Fecha</TableHead>
               <TableHead>Concepto</TableHead>
               <TableHead>Tipo</TableHead>
               <TableHead className="text-right">Importe</TableHead>
@@ -41,10 +40,15 @@ export function UltimosMovimientos({ rows }: { rows: Views<'movimientos_info'>[]
               const d = r.descripcion ?? ''
               return (
                 <TableRow key={r.id}>
-                  <TableCell>{formatDate(r.fecha_movimiento)}</TableCell>
-                  <TableCell title={d}>{d.length > MAX ? `${d.slice(0, MAX)}…` : d}</TableCell>
+                  <TableCell className="hidden xl:table-cell">{formatDate(r.fecha_movimiento)}</TableCell>
+                  {/* max-w-0 + w-full: la columna absorbe el espacio libre y el texto se recorta con puntos suspensivos */}
+                  <TableCell className="w-full max-w-0">
+                    <span className="block truncate" title={d}>
+                      {d}
+                    </span>
+                  </TableCell>
                   <TableCell>
-                    <StatusBadge status={r.tipo_movimiento} />
+                    <TipoMovimientoCell tipoId={r.tipo_id} nombre={r.tipo_movimiento} />
                   </TableCell>
                   <TableCell className="text-right">
                     <Money value={r.importe} variant={r.tipo_id === TIPO_MOVIMIENTO.EGRESO ? 'egreso' : 'ingreso'} />

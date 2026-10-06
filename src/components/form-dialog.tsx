@@ -46,7 +46,10 @@ export function FormDialog({
             {description ?? title}
           </DialogDescription>
         </DialogHeader>
-        <div className="max-h-[60vh] overflow-y-auto px-1">{children}</div>
+        {/* El anillo de foco de los campos sobresale 4 px; el relleno evita que el scroll lo recorte. */}
+        <div data-slot="form-dialog-body" className="max-h-[60vh] overflow-y-auto px-1 pb-1">
+          {children}
+        </div>
         {footer ? <DialogFooter className="border-t border-border pt-4">{footer}</DialogFooter> : null}
       </DialogContent>
     </Dialog>

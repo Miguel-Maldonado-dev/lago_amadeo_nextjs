@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import type { Tables } from '@/lib/supabase/types'
 import { ResidentesSection } from './residentes-section'
@@ -20,19 +20,28 @@ const residente = (id: number, nombre: string, es_principal: boolean): Tables<'r
 })
 
 describe('ResidentesSection', () => {
-  it('anuncia al residente principal como imagen con nombre accesible', () => {
+  it('marca al residente principal con la etiqueta Sí', () => {
     render(
       <ResidentesSection
         domicilioId={7}
         residentes={[residente(1, 'Ana López', true), residente(2, 'Luis Pérez', false)]}
       />,
     )
-    expect(screen.getAllByRole('img', { name: 'Residente principal' })).toHaveLength(1)
+    expect(screen.getByRole('columnheader', { name: 'Residente Principal' })).toBeInTheDocument()
+    const fila = (nombre: string) => screen.getByText(nombre).closest('tr')!
+    expect(within(fila('Ana López')).getByText('Sí').className).toContain('bg-success-light')
+    expect(within(fila('Luis Pérez')).queryByText('Sí')).not.toBeInTheDocument()
   })
 
   it('los botones de acción nombran al residente', () => {
     render(<ResidentesSection domicilioId={7} residentes={[residente(1, 'Ana López', true)]} />)
     expect(screen.getByRole('button', { name: 'Editar Ana López' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Eliminar Ana López' })).toBeInTheDocument()
+  })
+
+  it('los botones de acción tienen borde, como en el resto de la app', () => {
+    render(<ResidentesSection domicilioId={7} residentes={[residente(1, 'Ana López', true)]} />)
+    expect(screen.getByRole('button', { name: 'Editar Ana López' })).toHaveAttribute('data-variant', 'secondary')
+    expect(screen.getByRole('button', { name: 'Eliminar Ana López' })).toHaveAttribute('data-variant', 'secondary')
   })
 })

@@ -35,6 +35,7 @@ export function CuotasSection({
   return (
     <SectionCard
       title="Cuotas"
+      icon={Receipt}
       action={
         puedeGestionar && (
           <GenerarCuotaDomicilioDialog domicilioId={domicilioId} anios={anios} meses={meses} />
@@ -50,7 +51,7 @@ export function CuotasSection({
       ) : (
         <Table>
           <TableHeader>
-            <TableRow>
+            <TableRow className="bg-muted hover:bg-muted">
               <TableHead>Periodo</TableHead>
               <TableHead>Concepto</TableHead>
               <TableHead className="text-right">Importe</TableHead>

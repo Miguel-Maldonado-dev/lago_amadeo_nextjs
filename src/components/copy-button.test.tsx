@@ -12,3 +12,8 @@ it('copia el valor', async () => {
   expect(writeText).toHaveBeenCalledWith('abc')
   expect(await screen.findByRole('button', { name: 'Copiado' })).toBeInTheDocument()
 })
+
+it('deshabilitado no copia', () => {
+  render(<CopyButton value="" label="Copiar Facility" disabled />)
+  expect(screen.getByRole('button', { name: 'Copiar Facility' })).toBeDisabled()
+})

@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { Eye } from 'lucide-react'
 import { DataTable, type Column } from '@/components/data-table'
 import { PersonCell } from '@/components/person-cell'
@@ -8,11 +9,23 @@ import { StatusBadge } from '@/components/status-badge'
 import { formatDate } from '@/lib/dates'
 import type { DomicilioInfo } from '../queries'
 
+const detalleHref = (id: number) => '/domicilios/' + id
+
 const columns: Column<DomicilioInfo>[] = [
   {
     key: 'direccion',
     header: 'Dirección',
-    cell: (r) => <span className="font-medium">{r.direccion}</span>,
+    cell: (r) =>
+      r.id == null ? (
+        <span className="font-medium">{r.direccion}</span>
+      ) : (
+        <Link
+          href={detalleHref(r.id)}
+          className="rounded-sm font-medium outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        >
+          {r.direccion}
+        </Link>
+      ),
     sortValue: (r) => r.direccion ?? '',
   },
   {
@@ -53,6 +66,7 @@ export function DomiciliosTable({ rows }: { rows: DomicilioInfo[] }) {
       columns={columns}
       rows={rows}
       getRowKey={(r) => r.id ?? r.direccion ?? ''}
+      rowHref={(r) => (r.id == null ? undefined : detalleHref(r.id))}
       entityLabel="domicilios"
       emptyTitle="Sin domicilios"
       emptyDescription="Registra el primer domicilio con el botón Nuevo Domicilio."

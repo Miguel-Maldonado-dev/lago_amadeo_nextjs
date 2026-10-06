@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { formatPercent, percentOf, variation } from './percent'
+import { formatPercent, percentOf } from './percent'
 
 describe('percent', () => {
   it('percentOf', () => {
@@ -14,9 +14,5 @@ describe('percent', () => {
     expect(formatPercent(0, { sign: true })).toBe('0 %')
     expect(formatPercent(5)).toBe('5 %')
     expect(formatPercent(null)).toBe('—')
-  })
-  it('variation', () => {
-    expect(variation(105, 100)).toBe(5)
-    expect(variation(50, 0)).toBeNull()
   })
 })

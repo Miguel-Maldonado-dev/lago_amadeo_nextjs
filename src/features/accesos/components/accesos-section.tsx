@@ -24,6 +24,7 @@ export function AccesosSection({
         <SectionCard
           title="Números de acceso"
           description="Máximo 2 números"
+          icon={Phone}
           action={
             telefonos.length < LIMITES.TELEFONOS && (
               <NumeroDialog
@@ -58,6 +59,7 @@ export function AccesosSection({
         <SectionCard
           title="Acceso peatonal"
           description="Máximo 3 tarjetas"
+          icon={CreditCard}
           action={
             tarjetas.length < LIMITES.TARJETAS && (
               <NumeroDialog

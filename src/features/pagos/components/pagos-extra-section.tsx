@@ -1,4 +1,4 @@
-import { Plus, Receipt } from 'lucide-react'
+import { Banknote, Plus, Receipt } from 'lucide-react'
 import { EmptyState } from '@/components/empty-state'
 import { Money } from '@/components/money'
 import { SectionCard } from '@/components/section-card'
@@ -28,6 +28,7 @@ export function PagosExtraSection({
   return (
     <SectionCard
       title="Pagos extra"
+      icon={Banknote}
       action={
         puedeGestionar && (
           <RegistrarPagoExtraDialog
@@ -54,7 +55,7 @@ export function PagosExtraSection({
       ) : (
         <Table>
           <TableHeader>
-            <TableRow>
+            <TableRow className="bg-muted hover:bg-muted">
               <TableHead>Concepto</TableHead>
               <TableHead className="text-right">Importe</TableHead>
               <TableHead>Fecha de pago</TableHead>

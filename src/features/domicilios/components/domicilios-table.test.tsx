@@ -1,8 +1,11 @@
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, test } from 'vitest'
+import { afterEach, describe, expect, test, vi } from 'vitest'
 import type { DomicilioInfo } from '../queries'
 import { DomiciliosTable } from './domicilios-table'
+
+const { push } = vi.hoisted(() => ({ push: vi.fn() }))
+vi.mock('next/navigation', () => ({ useRouter: () => ({ push }) }))
 
 const row = (id: number, direccion: string, estatus: string): DomicilioInfo => ({
   id,
@@ -19,6 +22,8 @@ const row = (id: number, direccion: string, estatus: string): DomicilioInfo => (
 const rows = [row(1, 'LAGO UNO', 'Al corriente'), row(2, 'LAGO DOS', 'Moroso'), row(3, 'BOSQUE 3', 'Al corriente')]
 
 describe('DomiciliosTable', () => {
+  afterEach(() => push.mockClear())
+
   test('muestra las columnas', () => {
     render(<DomiciliosTable rows={rows} />)
     for (const name of ['Dirección', 'Fecha de Registro', 'Residente Principal', 'Estatus', 'Acciones']) {
@@ -45,5 +50,22 @@ describe('DomiciliosTable', () => {
     render(<DomiciliosTable rows={rows} />)
     await userEvent.click(screen.getAllByRole('button', { name: /Acciones de/ })[0])
     expect(screen.getByRole('menuitem', { name: 'Ver detalle' })).toHaveAttribute('href', '/domicilios/1')
+  })
+
+  test('al hacer clic en una fila abre el detalle del domicilio', async () => {
+    render(<DomiciliosTable rows={rows} />)
+    await userEvent.click(screen.getByText('Moroso'))
+    expect(push).toHaveBeenCalledWith('/domicilios/2')
+  })
+
+  test('la dirección es un enlace al detalle para teclado y lector de pantalla', () => {
+    render(<DomiciliosTable rows={rows} />)
+    expect(screen.getByRole('link', { name: 'LAGO UNO' })).toHaveAttribute('href', '/domicilios/1')
+  })
+
+  test('abrir el menú de acciones no navega', async () => {
+    render(<DomiciliosTable rows={rows} />)
+    await userEvent.click(screen.getAllByRole('button', { name: /Acciones de/ })[0])
+    expect(push).not.toHaveBeenCalled()
   })
 })

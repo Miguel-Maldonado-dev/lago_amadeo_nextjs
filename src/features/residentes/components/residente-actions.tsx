@@ -32,7 +32,7 @@ export function ResidenteActions({
         domicilioId={domicilioId}
         residente={residente}
         trigger={
-          <Button variant="ghost" size="icon-sm" aria-label={`Editar ${residente.nombre}`}>
+          <Button variant="secondary" size="icon-sm" aria-label={`Editar ${residente.nombre}`}>
             <Pencil />
           </Button>
         }
@@ -43,7 +43,12 @@ export function ResidenteActions({
         confirmLabel="Eliminar"
         onConfirm={onConfirm}
         trigger={
-          <Button variant="ghost" size="icon-sm" className="text-danger" aria-label={`Eliminar ${residente.nombre}`}>
+          <Button
+            variant="secondary"
+            size="icon-sm"
+            className="text-danger hover:bg-danger-light"
+            aria-label={`Eliminar ${residente.nombre}`}
+          >
             <Trash2 />
           </Button>
         }

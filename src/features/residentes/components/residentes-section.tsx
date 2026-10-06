@@ -1,7 +1,7 @@
 import { Check, Plus, Users } from 'lucide-react'
 import { EmptyState } from '@/components/empty-state'
-import { PersonCell } from '@/components/person-cell'
 import { SectionCard } from '@/components/section-card'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import type { Tables } from '@/lib/supabase/types'
@@ -18,6 +18,7 @@ export function ResidentesSection({
   return (
     <SectionCard
       title="Residentes"
+      icon={Users}
       action={
         <ResidenteDialog
           domicilioId={domicilioId}
@@ -39,30 +40,25 @@ export function ResidentesSection({
       ) : (
         <Table>
           <TableHeader>
-            <TableRow>
+            <TableRow className="bg-muted hover:bg-muted">
               <TableHead>Nombre</TableHead>
               <TableHead>Teléfono</TableHead>
-              <TableHead>Principal</TableHead>
+              <TableHead>Residente Principal</TableHead>
               <TableHead className="text-right">Acciones</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {residentes.map((r) => (
               <TableRow key={r.id}>
+                <TableCell>{r.nombre}</TableCell>
+                <TableCell className="tabular-nums">{r.telefono ?? '—'}</TableCell>
                 <TableCell>
-                  <PersonCell name={r.nombre} />
-                </TableCell>
-                <TableCell>{r.telefono ?? '—'}</TableCell>
-                <TableCell>
-                  {r.es_principal && (
-                    <span
-                      role="img"
-                      className="flex size-6 items-center justify-center rounded-full bg-success-light text-success"
-                      aria-label="Residente principal"
-                    >
-                      <Check className="size-4" />
-                    </span>
-                  )}
+                  {r.es_principal ? (
+                    <Badge variant="success">
+                      <Check aria-hidden="true" />
+                      Sí
+                    </Badge>
+                  ) : null}
                 </TableCell>
                 <TableCell>
                   <ResidenteActions domicilioId={domicilioId} residente={r} />

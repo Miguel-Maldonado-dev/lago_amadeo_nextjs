@@ -1,0 +1,6 @@
+export const MSG_MAX_TELEFONOS = 'Se alcanzó el máximo de 2 números de acceso.'
+export const MSG_MAX_TARJETAS = 'Se alcanzó el máximo de 3 tarjetas de acceso.'
+export const MSG_TELEFONO_GUARDADO = 'Número guardado correctamente.'
+export const MSG_TELEFONO_ELIMINADO = 'Número eliminado correctamente.'
+export const MSG_TARJETA_GUARDADA = 'Tarjeta guardada correctamente.'
+export const MSG_TARJETA_ELIMINADA = 'Tarjeta eliminada correctamente.'

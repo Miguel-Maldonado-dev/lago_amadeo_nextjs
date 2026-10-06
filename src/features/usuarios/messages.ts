@@ -1,0 +1,7 @@
+export const MSG_USUARIO_CREADO = 'Usuario creado correctamente.'
+export const MSG_USUARIO_ACTUALIZADO = 'Usuario actualizado correctamente.'
+export const MSG_USUARIO_ACTIVADO = 'El usuario fue activado correctamente.'
+export const MSG_USUARIO_DESACTIVADO = 'El usuario fue desactivado correctamente.'
+export const MSG_NO_AUTO_DESACTIVAR = 'No puedes desactivar tu propio usuario.'
+export const MSG_NO_AUTO_CAMBIAR_ROL = 'No puedes cambiar tu propio rol.'
+export const MSG_USUARIO_ERROR_PREFIX = 'No fue posible crear el usuario: '

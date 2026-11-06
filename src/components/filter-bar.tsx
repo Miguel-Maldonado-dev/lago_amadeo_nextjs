@@ -8,10 +8,13 @@ export function FilterBar({
   children,
   onClear,
   clearLabel = 'Limpiar filtros',
+  actions,
 }: {
   children: React.ReactNode
   onClear?: () => void
   clearLabel?: string
+  /** Acciones sobre los resultados filtrados (p. ej. exportar), al final de la barra. */
+  actions?: React.ReactNode
 }) {
   return (
     <Card className="flex flex-row flex-wrap items-end gap-3 p-4">
@@ -21,6 +24,7 @@ export function FilterBar({
           <FilterX /> {clearLabel}
         </Button>
       )}
+      {actions}
     </Card>
   )
 }

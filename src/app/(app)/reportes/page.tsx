@@ -30,7 +30,12 @@ export default async function ReportesPage({
       <ReportesTabs tab={tab}>
         <TabsContent value="usuario">
           {tab === 'usuario' && (
-            <PagosUsuarioTab usuario={first(sp.usuario)} inicio={first(sp.inicio)} fin={first(sp.fin)} />
+            <PagosUsuarioTab
+              usuario={first(sp.usuario)}
+              inicio={first(sp.inicio)}
+              fin={first(sp.fin)}
+              metodo={first(sp.metodo)}
+            />
           )}
         </TabsContent>
         <TabsContent value="vehicular">

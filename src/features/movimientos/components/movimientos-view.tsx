@@ -13,6 +13,7 @@ import { MESES } from '@/lib/months'
 import type { Views } from '@/lib/supabase/types'
 import { useDebouncedValue } from '@/lib/use-debounced-value'
 import { aniosDisponibles, filterMovimientos, movimientosMetrics } from './movimientos-filters'
+import { ExportarMovimientos } from './exportar-movimientos'
 import { MovimientosTable } from './movimientos-table'
 
 const MES_OPTIONS = MESES.map((n, i) => ({ value: String(i + 1), label: n }))
@@ -49,6 +50,7 @@ export function MovimientosView({ rows, saldo }: { rows: Views<'movimientos_info
         ]}
       />
       <FilterBar
+        actions={<ExportarMovimientos rows={filtradas} filtros={{ query: debouncedQuery, anio, mes, tipo }} />}
         onClear={() => {
           setQuery('')
           setAnio(null)

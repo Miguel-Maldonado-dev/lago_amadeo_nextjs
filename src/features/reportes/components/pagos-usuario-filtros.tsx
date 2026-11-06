@@ -1,6 +1,6 @@
 'use client'
 
-import { Search, UserRound } from 'lucide-react'
+import { Search, UserRound, Wallet } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'sonner'
@@ -13,20 +13,26 @@ import { todayISO } from '@/lib/dates'
 
 export function PagosUsuarioFiltros({
   usuarios,
+  metodos,
   usuario: usuarioProp = '',
   inicio: inicioProp = '',
   fin: finProp = '',
+  metodo: metodoProp = '',
 }: {
   usuarios: { id: string; user_name: string }[]
+  metodos: { id: number; name: string }[]
   usuario?: string
   inicio?: string
   fin?: string
+  metodo?: string
 }) {
   const router = useRouter()
   const pathname = usePathname()
   const [usuario, setUsuario] = useState(usuarioProp)
   const [inicio, setInicio] = useState(inicioProp)
   const [fin, setFin] = useState(finProp)
+  // Opcional: vacío equivale a "Todos los métodos".
+  const [metodo, setMetodo] = useState(metodoProp)
   const hoy = todayISO()
 
   function onFinChange(value: string) {
@@ -43,6 +49,7 @@ export function PagosUsuarioFiltros({
       return
     }
     const qs = new URLSearchParams({ tab: 'usuario', usuario, inicio, fin })
+    if (metodo) qs.set('metodo', metodo)
     router.replace(`${pathname}?${qs.toString()}`)
   }
 
@@ -52,6 +59,7 @@ export function PagosUsuarioFiltros({
         setUsuario('')
         setInicio('')
         setFin('')
+        setMetodo('')
         router.replace(`${pathname}?tab=usuario`)
       }}
     >
@@ -91,6 +99,15 @@ export function PagosUsuarioFiltros({
           className="w-44"
         />
       </div>
+      <LabeledSelect
+        id="rep-metodo"
+        label="Método de pago"
+        icon={Wallet}
+        options={metodos.map((m) => ({ value: String(m.id), label: m.name }))}
+        allLabel="Todos los métodos"
+        value={metodo || null}
+        onChange={(v) => setMetodo(v ?? '')}
+      />
       <Button type="button" onClick={buscar}>
         <Search />
         Buscar

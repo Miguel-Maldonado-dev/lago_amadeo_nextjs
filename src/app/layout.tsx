@@ -1,12 +1,15 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import localFont from 'next/font/local'
 import { Toaster } from '@/components/ui/sonner'
 import './globals.css'
 
-const inter = Inter({
+// Inter va incluida en el proyecto (subconjunto latin, fuente variable 100–900): con
+// next/font/google la compilación descarga la fuente y falla si no hay red (p. ej. en Vercel).
+const inter = localFont({
+  src: './fonts/inter-latin-wght-normal.woff2',
   variable: '--font-sans',
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
+  weight: '100 900',
+  display: 'swap',
 })
 
 export const metadata: Metadata = {

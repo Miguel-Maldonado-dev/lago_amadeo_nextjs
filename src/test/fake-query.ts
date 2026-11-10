@@ -40,15 +40,23 @@ export function callsOf(query: FakeQuery, method: string): FakeCall[] {
   return query.calls.filter((call) => call.method === method)
 }
 
+/**
+ * Con un arreglo de consultas por tabla, cada `from(tabla)` consume la siguiente y la última se
+ * repite: sirve cuando una acción consulta la misma tabla varias veces con resultados distintos.
+ */
 export function fakeSupabase(
-  tables: Record<string, FakeQuery>,
+  tables: Record<string, FakeQuery | FakeQuery[]>,
   extra: Partial<{ rpc: Mock; auth: unknown }> = {},
 ) {
+  const usados: Record<string, number> = {}
   return {
     from: vi.fn((table: string) => {
-      const query = tables[table]
-      if (!query) throw new Error(`fakeSupabase: tabla "${table}" no configurada`)
-      return query
+      const entry = tables[table]
+      if (!entry) throw new Error(`fakeSupabase: tabla "${table}" no configurada`)
+      if (!Array.isArray(entry)) return entry
+      const i = usados[table] ?? 0
+      usados[table] = i + 1
+      return entry[Math.min(i, entry.length - 1)]
     }),
     rpc: vi.fn(),
     auth: {} as unknown,

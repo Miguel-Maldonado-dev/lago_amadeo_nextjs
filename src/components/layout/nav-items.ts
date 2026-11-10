@@ -4,6 +4,7 @@ import {
   Home,
   Landmark,
   Receipt,
+  Settings,
   UserCog,
   Users,
   Building2,
@@ -22,6 +23,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'Movimientos Financieros', href: '/movimientos', icon: Landmark },
   { label: 'Reportes', href: '/reportes', icon: BarChart3 },
   { label: 'Usuarios', href: '/usuarios', icon: UserCog, roles: [ROLES.ADMINISTRADOR] },
+  { label: 'Configuración', href: '/configuracion', icon: Settings, roles: [ROLES.ADMINISTRADOR] },
 ]
 
 /**

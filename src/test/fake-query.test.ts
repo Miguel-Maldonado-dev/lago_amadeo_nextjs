@@ -29,3 +29,13 @@ test('fakeSupabase falla con un mensaje claro si la tabla no está configurada',
 
   expect(() => supabase.from('cuotas')).toThrow('fakeSupabase: tabla "cuotas" no configurada')
 })
+
+test('con un arreglo, cada from() consume la siguiente consulta y repite la última', async () => {
+  const a = fakeQuery({ data: 'a' })
+  const b = fakeQuery({ data: 'b' })
+  const supabase = fakeSupabase({ t: [a, b] })
+
+  expect((await supabase.from('t')).data).toBe('a')
+  expect((await supabase.from('t')).data).toBe('b')
+  expect((await supabase.from('t')).data).toBe('b')
+})
